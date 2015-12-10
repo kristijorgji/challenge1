@@ -10,11 +10,12 @@ The input is given in the following form:
 where m,l,k >= 0
 
 Sample input:
+<pre>
 a/b/c1
 x/b
 a/b/c/d
 m
-<pre>
+
 Output:
 {
   a: {
