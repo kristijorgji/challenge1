@@ -1,5 +1,8 @@
 # Challenge 1
-This is my solution in C# for the following challenge problem:
+
+This is my solution in C# for the following challenge problem. You are welcomed to provide your own solutions in this repo. I would love to check them out and find out the most efficent way of solving this problem.
+
+The problem:
 
 You are required to implement an algorithm that recursively builds JSON based on the input.
 The input is given in the following form:
