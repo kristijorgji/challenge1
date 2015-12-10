@@ -1,0 +1,4 @@
+C:\Users\kjorgji\documents\visual studio 2010\Projects\ja\ja\bin\Release\ja.exe
+C:\Users\kjorgji\documents\visual studio 2010\Projects\ja\ja\bin\Release\ja.pdb
+C:\Users\kjorgji\documents\visual studio 2010\Projects\ja\ja\obj\x86\Release\ja.exe
+C:\Users\kjorgji\documents\visual studio 2010\Projects\ja\ja\obj\x86\Release\ja.pdb

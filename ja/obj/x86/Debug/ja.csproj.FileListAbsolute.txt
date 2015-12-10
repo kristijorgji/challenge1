@@ -1,0 +1,10 @@
+c:\users\kjorgji\documents\visual studio 2010\Projects\ja\ja\bin\Debug\ja.exe
+c:\users\kjorgji\documents\visual studio 2010\Projects\ja\ja\bin\Debug\ja.pdb
+c:\users\kjorgji\documents\visual studio 2010\Projects\ja\ja\obj\x86\Debug\ja.exe
+c:\users\kjorgji\documents\visual studio 2010\Projects\ja\ja\obj\x86\Debug\ja.pdb
+C:\Users\Kristi Jorgji\Documents\Git\detyra\ja\bin\Debug\ja.exe
+C:\Users\Kristi Jorgji\Documents\Git\detyra\ja\bin\Debug\ja.pdb
+C:\Users\Kristi Jorgji\Documents\Git\detyra\ja\obj\x86\Debug\ja.exe
+C:\Users\Kristi Jorgji\Documents\Git\detyra\ja\obj\x86\Debug\ja.pdb
+C:\Users\Kristi Jorgji\Documents\Git\detyra\ja\obj\x86\Debug\ja.csprojResolveAssemblyReference.cache
+C:\Users\kjorgji\documents\visual studio 2010\Projects\ja\ja\obj\x86\Debug\ja.csprojResolveAssemblyReference.cache
