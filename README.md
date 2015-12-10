@@ -14,7 +14,7 @@ a/b/c1
 x/b
 a/b/c/d
 m
-
+<pre>
 Output:
 {
   a: {
@@ -30,6 +30,7 @@ Output:
   },
   m: ""
 }
+</pre>
 
 *Note that ordering of nodes in the output does not matter
 **Also, first you can do preprocessing, then apply the recursive algorithm.
