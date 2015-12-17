@@ -10,102 +10,19 @@ namespace ja
 {
     class Program
     {
-        /* class which will hold all the information needed about a node to build the json string such as children, brothers (nodes on same level) and parent */
-        class Node : IEquatable<Node>
-        {
-            string name;
-            Node parent;
-            Node rightBrother, leftBrother;
-            List<Node> children;
+        static Node mainroot; // debug purpose only, to print the current state of the graph as it is transforming throught recursive iterations
 
-            public Node(string name, Node parent = null) 
-            {
-                this.name = name;
-                this.parent = parent;
-                children = new List<Node>();
-            }
-
-            public void addChild(Node child)
-            {
-                children.Add(child);
-            }
-
-            public void setChild(Node child, int position)
-            {
-                children[position] = child;
-            }
-
-            public void setBrothers(Node leftBrother, Node rightBrother)
-            {
-                this.leftBrother = leftBrother;
-                this.rightBrother = rightBrother;
-            }
-
-            public void deleteChild(int position)
-            {
-                children.RemoveAt(position);
-            }
-
-            public void setParent(Node parent)
-            {
-                this.parent = parent;
-            }
-
-            public List<Node> getChildren()
-            {
-                return children;
-            }
-
-            public Node getRightBrother()
-            {
-                return rightBrother;
-            }
-
-            public Node getLeftBrother()
-            {
-                return leftBrother;
-            }
-            public Node getParent()
-            {
-                return parent;
-            }
-
-            public string getName()
-            {
-                return name;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (obj == null) return false;
-                Node objAsNode = obj as Node;
-                if (objAsNode == null) return false;
-                else return Equals(objAsNode);
-            }
-
-            public bool Equals(Node other)
-            {
-                if (other == null) return false;
-                return (this.name == other.name && this.parent.getName() == other.getParent().getName());
-            }
-
-            public override int GetHashCode()
-            {
-                return name.GetHashCode() + parent.getName().GetHashCode();              
-            }
-          
-        }
-        
         static void Main(string[] args)
         {    
             string[] input = System.IO.File.ReadAllLines("input.txt");
             Node root = new Node("root"); /* add a root node to link all the beggining nodes to this */
+            mainroot = root;
             buildGraph(input,  root); /* link all nodes with each other, and the beggining nodes with the root */
+            //System.IO.File.AppendAllText("steps.txt", "START".PadLeft(10, '*') + Environment.NewLine + pAllNodes(mainroot));
             transformGraph(root); /* attach same nodes to same point, thus avoiding 2 lines starting with same nodes seqeuence */
-            printAllNodes(root);    /* print only in debug mode to check transformed graph */
+            //printAllNodes(root);    /* print only in debug mode to check transformed graph */
             linkBrothers(root);     /* link up and down nodes corrensponding to the same level, right means down, left up */
             StringBuilder r = new StringBuilder("{" + Environment.NewLine);
-            //StringBuilder r = new StringBuilder();
             r.Append(parseToJson(root, 2, root));   /* traverse the graph and get the json string */
             r.Append("}");
             System.IO.File.WriteAllText("out.txt", r.ToString());
@@ -217,30 +134,33 @@ namespace ja
 
             List<Node> children = root.getChildren();
             int changedLinks = 0;
+           
             for (int i = 0; i < children.Count; i++)
             {
-                //if (children[i] == null) continue;
 
                 for (int j = 0; j < children.Count; j++)
                 {
-                    if (i == j || children[j] == null) continue; /* don't want to check if equal with himself or with deleted node */
-
+                    if (children[i] == null || children[j] == null) continue;
                     if (children[i].Equals(children[j]))
                     {
+                        if (i == j || children[j] == null) continue; //skip when compares with himself
                         /* attach to one link thus avoiding two starting nodes in different lines */
                         foreach (Node c in children[j].getChildren())
                         {
                             children[i].addChild(c);
-                            c.setParent(children[i]);
+                            c.setParent(children[i]); 
                         }
-                        //root.setChild(null, j);
-                        root.deleteChild(j);
+                        root.setChild(null, j);
+                        //root.deleteChild(i);
                         changedLinks++;
-                        //printAllNodes(root);
                     }
-                }   
+                }
+                
             }
-            
+            root.deleteNullChildren();
+
+            //System.IO.File.AppendAllText("steps.txt", "Root is " + root.getName() + "".PadLeft(10,'*') + Environment.NewLine + pAllNodes(mainroot));
+            //printAllNodes(mainroot);
             foreach (Node n in root.getChildren())
             {
                 transformGraph(n);
@@ -276,6 +196,7 @@ namespace ja
            }
         }
 
+        //These two functions are for debug only, see current state of graph
         [Conditional("DEBUG")]
         static void printAllNodes(Node root, int spaces = 0)
         {
@@ -284,6 +205,18 @@ namespace ja
                 Console.Write(n.getName().PadLeft(spaces) + Environment.NewLine);
                 printAllNodes(n, spaces + 4);
             }
-        } 
+        }
+
+  
+        static string  pAllNodes(Node root,int spaces = 0)
+        {
+            string result = "";
+            foreach (Node n in root.getChildren())
+            {
+                result += n.getName().PadLeft(spaces) + Environment.NewLine;
+                result += pAllNodes(n, spaces + 4);
+            }
+            return result;
+        }
     }
 }
