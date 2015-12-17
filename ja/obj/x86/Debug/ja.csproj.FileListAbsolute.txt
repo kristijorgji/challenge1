@@ -12,3 +12,8 @@ C:\Users\kjorgji\Documents\challenge1\ja\bin\Debug\ja.exe
 C:\Users\kjorgji\Documents\challenge1\ja\bin\Debug\ja.pdb
 C:\Users\kjorgji\Documents\challenge1\ja\obj\x86\Debug\ja.exe
 C:\Users\kjorgji\Documents\challenge1\ja\obj\x86\Debug\ja.pdb
+C:\Users\Kristi Jorgji\Documents\Git\challenge1\ja\obj\x86\Debug\ja.exe
+C:\Users\Kristi Jorgji\Documents\Git\challenge1\ja\obj\x86\Debug\ja.pdb
+C:\Users\Kristi Jorgji\Documents\Git\challenge1\ja\bin\Debug\ja.exe
+C:\Users\Kristi Jorgji\Documents\Git\challenge1\ja\bin\Debug\ja.pdb
+C:\Users\Kristi Jorgji\Documents\Git\challenge1\ja\obj\x86\Debug\ja.csprojResolveAssemblyReference.cache

@@ -17,18 +17,19 @@ namespace ja
             string[] input = System.IO.File.ReadAllLines("input.txt");
             Node root = new Node("root"); /* add a root node to link all the beggining nodes to this */
             mainroot = root;
+
             buildGraph(input,  root); /* link all nodes with each other, and the beggining nodes with the root */
             //System.IO.File.AppendAllText("steps.txt", "START".PadLeft(10, '*') + Environment.NewLine + pAllNodes(mainroot));
+
             transformGraph(root); /* attach same nodes to same point, thus avoiding 2 lines starting with same nodes seqeuence */
             //printAllNodes(root);    /* print only in debug mode to check transformed graph */
+
             linkBrothers(root);     /* link up and down nodes corrensponding to the same level, right means down, left up */
-            StringBuilder r = new StringBuilder("{" + Environment.NewLine);
-            r.Append(parseToJson(root, 2, root));   /* traverse the graph and get the json string */
-            r.Append("}");
+            StringBuilder r = parseToJson(root, 2);    /* traverse the graph and get the json string */
             System.IO.File.WriteAllText("out.txt", r.ToString());
         }
 
-        static StringBuilder parseToJson(Node root, int spaces, Node croot)
+        static StringBuilder parseToJson(Node root, int spaces)
         {
             StringBuilder result = new StringBuilder();
             List<Node> children = root.getChildren();
@@ -66,7 +67,7 @@ namespace ja
                         {
                             result.Append(Environment.NewLine + "}".PadLeft(spaces - x));
                         }
-                        result.Append(Environment.NewLine);
+                        result.Append(Environment.NewLine + "}"); //close entire json string
                     }
                     else
                     {
@@ -82,11 +83,16 @@ namespace ja
             }
             else
             {
-                if (root != croot) result.Append(root.getName().PadLeft(spaces) + ": {" + Environment.NewLine);
+                if (root.getParent() != null)
+                    result.Append(root.getName().PadLeft(spaces) + ": {" + Environment.NewLine);
+                else
+                    result.Append("{" + Environment.NewLine); //won't print the root, just the opening bracket
+
+
                 for (int i = 0; i < children.Count; i++)
                 {
                     //Debug.Assert(children[i].getName() != "d");
-                    result.Append(parseToJson(children[i], spaces + 2, croot));
+                    result.Append(parseToJson(children[i], spaces + 2));
                 }
             }
 
