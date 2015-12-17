@@ -105,6 +105,7 @@ namespace ja
             printAllNodes(root);    /* print only in debug mode to check transformed graph */
             linkBrothers(root);     /* link up and down nodes corrensponding to the same level, right means down, left up */
             StringBuilder r = new StringBuilder("{" + Environment.NewLine);
+            //StringBuilder r = new StringBuilder();
             r.Append(parseToJson(root, 2, root));   /* traverse the graph and get the json string */
             r.Append("}");
             System.IO.File.WriteAllText("out.txt", r.ToString());
@@ -112,85 +113,66 @@ namespace ja
 
         static StringBuilder parseToJson(Node root, int spaces, Node croot)
         {
-            if (root == null)
-                return null;
-
             StringBuilder result = new StringBuilder();
             List<Node> children = root.getChildren();
-            for (int i = 0; i < children.Count; i++)
+            
+            if (children.Count == 0)
             {
-                Debug.Assert(children[i].getName() != "l", "L");
-                if (children[i].getChildren().Count == 0)
+                if (root.getRightBrother() != null)
                 {
-                    
-                    Node rightBrother = children[i].getRightBrother();
-                    Node leftBrother = children[i].getLeftBrother();
-                    if (rightBrother == null && leftBrother == null) /* last of a parent? */
+                    result.Append(root.getName().PadLeft(spaces) + ": \"\"" + Environment.NewLine + ",".PadLeft(spaces) + Environment.NewLine);
+                }
+                else
+                {
+                    //backtrack to last parent thas has right brother
+                    int b = 0;
+                    bool reachedStartRoot = false;
+                    Node p = root;
+                    do
                     {
-                        /* backtrack to root to find all parents for closing brackets */
-                        int parents = 1;
-                        Node parentBeforeRoot = children[i].getParent();
-                        Node firstRightBrother = null;
-                        int rbPos = 0;
-                        while (parentBeforeRoot != croot)
-                        {
-                            parents++;
-                            if (firstRightBrother == null)
-                            {
-                                firstRightBrother = parentBeforeRoot.getRightBrother();
-                                if (firstRightBrother != null)
-                                    rbPos = parents;
-                            }
-                            parentBeforeRoot = parentBeforeRoot.getParent();
-                            if (parentBeforeRoot.getParent() == croot) /* store one node before croot */
-                            {
-                                parents++;
-                                break;
-                            }
+                        p = p.getParent();
+                        if (p == null)
+                        { 
+                            reachedStartRoot = true; 
+                            break; 
                         }
-                       
-               
-                        result.Append(children[i].getName().PadLeft(spaces) + ": \"\"" + Environment.NewLine);
-                        if (firstRightBrother != null) /* not the last node of a parent */
-                        {
-                            for (int x = 0; x < parents - rbPos - 1; x++)
-                                result.Append("}".PadLeft(spaces >= 2 ? spaces - 1 * x : spaces) + Environment.NewLine);
-                            result.Append("},".PadLeft(spaces >= 2 ? spaces - 1 : spaces) + Environment.NewLine); 
-                            continue;
-                        }
+                        b++;
+                        if (p.getRightBrother() != null)
+                            break;
+                        
+                    } while (true);
 
-                        for (int z = 1; z < parents; z++)
+                    if (reachedStartRoot) //this is the final node of the entire graph
+                    {
+                        result.Append(root.getName().PadLeft(spaces) + ": \"\"");
+                        for (int x = 0; x < b-1; x++)
                         {
-                            if (z != parents - 1)
-                            {
-                                result.Append("}".PadLeft(spaces >= 2 ? spaces - 1 * z : spaces) + Environment.NewLine);
-                            }
-                            else
-                            {
-                                if (parentBeforeRoot.getRightBrother() == null) /* last element of entire graph */
-                                    result.Append("}".PadLeft(spaces >= 2 ? spaces - 1 * z : spaces) + Environment.NewLine);
-                                else
-                                    result.Append("},".PadLeft(spaces >= 2 ? spaces - 1 * z : spaces) + Environment.NewLine);
-                            }
+                            result.Append(Environment.NewLine + "}".PadLeft(spaces - x));
                         }
+                        result.Append(Environment.NewLine);
                     }
-                    else if (rightBrother != null) 
+                    else
                     {
-                        result.Append(children[i].getName().PadLeft(spaces) + ": \"\"" + Environment.NewLine + ",".PadLeft(spaces >= 2 ? spaces - 2 : spaces) + Environment.NewLine);
-                    }
-                    else if (rightBrother == null) /* last of total nodes */
-                    {
-                        result.Append(children[i].getName().PadLeft(spaces) + ": \"\"" + Environment.NewLine);
+                        result.Append(root.getName().PadLeft(spaces) + ": \"\"");
+                        int x = 0;
+                        for (x = 0; x < b-1; x++)
+                        {
+                            result.Append(Environment.NewLine + "}".PadLeft(spaces - x));
+                        }
+                        result.Append(Environment.NewLine + "},".PadLeft(spaces - x) + Environment.NewLine);
                     }
                 }
-                else /* has children */
-                {
-                    result.Append(children[i].getName().PadLeft(spaces) + ": {" + Environment.NewLine);
-                }
-
-                result.Append(parseToJson(children[i], spaces + 2, croot));
             }
-           
+            else
+            {
+                if (root != croot) result.Append(root.getName().PadLeft(spaces) + ": {" + Environment.NewLine);
+                for (int i = 0; i < children.Count; i++)
+                {
+                    //Debug.Assert(children[i].getName() != "d");
+                    result.Append(parseToJson(children[i], spaces + 2, croot));
+                }
+            }
+
             return result;
         }
 
@@ -247,7 +229,10 @@ namespace ja
                     {
                         /* attach to one link thus avoiding two starting nodes in different lines */
                         foreach (Node c in children[j].getChildren())
-                          children[i].addChild(c);
+                        {
+                            children[i].addChild(c);
+                            c.setParent(children[i]);
+                        }
                         //root.setChild(null, j);
                         root.deleteChild(j);
                         changedLinks++;
@@ -255,7 +240,7 @@ namespace ja
                     }
                 }   
             }
-           
+            
             foreach (Node n in root.getChildren())
             {
                 transformGraph(n);
